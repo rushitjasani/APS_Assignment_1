@@ -2,68 +2,153 @@
 #define ll long long
 using namespace std;
 
-void runningMedian(vector<double> a)
+ll min_heap[100005];
+ll max_heap[100005];
+
+void Max_Heapify(ll index, ll size)
 {
-    priority_queue<double, vector<double>, greater<double>> left;
-    priority_queue<double> right;
-    vector<double> ans(a.size(), 0);
-    right.push(a[0]);
-    ans[0] = a[0];
-    for (ll i = 1; i < a.size(); i++)
+    ll left_child = (2 * index) + 1;
+    ll right_child = (2 * index) + 2;
+    ll max_pos;
+    if (left_child <= size - 1 && max_heap[left_child] > max_heap[index])
+        max_pos = left_child;
+    else
+        max_pos = index;
+
+    if (right_child <= size - 1 && max_heap[right_child] > max_heap[max_pos])
+        max_pos = right_child;
+    if (max_pos != index)
     {
-        double element = a[i];
-        if (right.size() == left.size())
+        ll temp = max_heap[index];
+        max_heap[index] = max_heap[max_pos];
+        max_heap[max_pos] = temp;
+        Max_Heapify(max_pos, size);
+    }
+    return;
+}
+
+void Min_Heapify(ll index, ll size)
+{
+    ll left_child = (2 * index) + 1;
+    ll right_child = (2 * index) + 2;
+    ll min_pos;
+    if (left_child <= size - 1 && min_heap[left_child] < min_heap[index])
+        min_pos = left_child;
+    else
+        min_pos = index;
+
+    if (right_child <= size - 1 && min_heap[right_child] < min_heap[min_pos])
+        min_pos = right_child;
+
+    if (min_pos != index)
+    {
+        ll temp = min_heap[index];
+        min_heap[index] = min_heap[min_pos];
+        min_heap[min_pos] = temp;
+        Min_Heapify(min_pos, size);
+    }
+    return;
+}
+
+void max_insert(ll a, ll size)
+{
+    max_heap[size - 1] = a;
+    for (ll i = ceil(size - 1 / 2.0) - 1; i >= 0;)
+    {
+        Max_Heapify(i, size);
+        i = ceil(i / 2.0) - 1;
+    }
+}
+
+void min_insert(ll a, ll size)
+{
+    min_heap[size - 1] = a;
+    for (ll i = ceil(size - 1 / 2.0) - 1; i >= 0;)
+    {
+        Min_Heapify(i, size);
+        i = ceil(i / 2.0) - 1;
+    }
+}
+void delete_max(ll size)
+{
+    max_heap[0] = max_heap[size - 1];
+    size--;
+    Max_Heapify(0, size);
+}
+void delete_min(ll size)
+{
+    min_heap[0] = min_heap[size - 1];
+    size--;
+    Min_Heapify(0, size);
+}
+
+void runningMedian(ll a[], ll size)
+{
+    ll max_heap_size = 0;
+    ll min_heap_size = 0;
+    double ans[size] = {0};
+    max_insert(a[0], ++max_heap_size);
+    ans[0] = a[0];
+
+    for (ll i = 1; i < size; i++)
+    {
+        ll el = a[i];
+        if (max_heap_size == min_heap_size)
         {
-            if (ans[i - 1] > element)
+            if (ans[i - 1] > el)
             {
-                right.push(element);
-                ans[i] = right.top();
+                max_insert(el, ++max_heap_size);
+                ans[i] = max_heap[0] * 1.0;
             }
             else
             {
-                left.push(element);
-                ans[i] = left.top() * 1.0;
+                min_insert(el, ++min_heap_size);
+                ans[i] = min_heap[0] * 1.0;
             }
         }
-        else if (right.size() > left.size())
+        else if (max_heap_size > min_heap_size)
         {
-            if (element < ans[i - 1])
+            if (el < ans[i - 1])
             {
-                left.push(right.top());
-                right.pop();
-                right.push(element);
+                min_insert(max_heap[0], ++min_heap_size);
+                delete_max(max_heap_size);
+                max_heap_size--;
+                max_insert(el, ++max_heap_size);
             }
             else
-                left.push(element);
-
-            ans[i] = (left.top() + right.top()) / 2.0;
+            {
+                min_insert(el, ++min_heap_size);
+            }
+            ans[i] = (min_heap[0] + max_heap[0]) / 2.0;
         }
         else
         {
-            if (element > ans[i - 1])
+            if (el > ans[i - 1])
             {
-                right.push(left.top());
-                left.pop();
-                left.push(element);
+                max_insert(min_heap[0], ++max_heap_size);
+                delete_min(min_heap_size);
+                min_heap_size--;
+                min_insert(el, ++min_heap_size);
             }
             else
-                right.push(element);
-
-            ans[i] = (left.top() + right.top()) / 2.0;
+            {
+                max_insert(el, ++max_heap_size);
+            }
+            ans[i] = (min_heap[0] + max_heap[0]) / 2.0;
         }
     }
-    for (auto i : ans)
-        cout << fixed << setprecision(1) << i << endl;
+    for (ll i = 0; i < size; i++)
+        cout << fixed << setprecision(1) << ans[i] << endl;
     return;
 }
 
 int main()
 {
-    ll n;
+    ll n = 0;
     cin >> n;
-    vector<double> v(n);
+    ll a[100005];
     for (ll i = 0; i < n; i++)
-        cin >> v[i];
-    runningMedian(v);
+        cin >> a[i];
+    runningMedian(a, n);
     return 0;
 }
