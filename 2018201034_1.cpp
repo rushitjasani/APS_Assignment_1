@@ -3,16 +3,27 @@
 #include <string>
 using namespace std;
 #define ll long long
-
+/*
+ * Biginteger class.
+ */
 class BigInteger
 {
   private:
-    string data;
-    int size;
-    int sign;
+    string data;    //stores each digit in string.
+    int size;       //size of string.
+    int sign;       //stores sign of number
 
   public:
+    /*
+     * Empty constructor.
+     */
     BigInteger(){};
+    /*
+     * Takes string in argument, if sign is there then remove signs
+     * and set sign bit accordingly. then remove leading 
+     * zeros from number and then finds size of string 
+     * and store in size.
+     */
     BigInteger(string input_data)
     {
         if (input_data[0] == '-')
@@ -35,6 +46,9 @@ class BigInteger
             data = input_data;
         }
     }
+    /*
+     * returns data by concatenation of sign.
+     */
     string getData()
     {
         if (this->sign == 0)
@@ -46,14 +60,22 @@ class BigInteger
             return '-' + this->data;
         }
     }
+    /*
+     * method to add two BigInteger.
+     */
     BigInteger add(BigInteger y)
     {
         return add(*this, y);
     }
+    /*
+     * overloaded add method.
+     */
     BigInteger add(BigInteger x, BigInteger y)
     {
         if (x.sign == y.sign)
-        {
+        {   
+            //if sign is same then add data and handle sign at end.
+            //copy data in two temp variables called x_data and y_data.
             int carry_val = 0;
             int place_val;
             string ans;
@@ -62,6 +84,7 @@ class BigInteger
             int x_len = x.size;
             int y_len = y.size;
             int t_len;
+            //pad zeroes in shorter string.
             if (x_len < y_len)
             {
                 t_len = y_len;
@@ -80,6 +103,7 @@ class BigInteger
                     y_len++;
                 }
             }
+            //Basic Addition operation.
             for (int i = t_len - 1; i > 0; i--)
             {
                 place_val = ((x_data[i] - '0') + (y_data[i] - '0') + carry_val) % 10;
@@ -94,6 +118,7 @@ class BigInteger
         }
         else if (x.sign == 0 && y.sign == 1)
         {
+            // if sign is diff then do subtraction of both numbers.
             y.sign = 0;
             BigInteger ans = subtract(x, y);
             y.sign = 1;
@@ -101,12 +126,16 @@ class BigInteger
         }
         else
         {
+            // if sign is diff then do subtraction of both numbers.
             x.sign = 0;
             BigInteger ans = subtract(y, x);
             x.sign = 1;
             return ans;
         }
     }
+    /*
+     * find 10s complement by finding 9s complement and adding 1 to data.
+     */
     string tenscomp(string s)
     {
         if (s.length() == 1 && s[0] == '0')
@@ -128,16 +157,23 @@ class BigInteger
             s = (char)(carry + '0') + s;
         return s;
     }
+    /*
+     * method to subtract two numbers.
+     */
     BigInteger subtract(BigInteger y)
     {
         return subtract(*this, y);
     }
+    /*
+     * overloaded method to subtract two numbers.
+     */
     BigInteger subtract(BigInteger x, BigInteger y)
-    {
+    {   
         if (y.size == 1 && y.data[0] == '0')
             return x;
         if (x.sign == 0 && y.sign == 0)
         {
+            // if both has same sign then we have to subtract one from other.
             int carry_val = 0;
             int place_val;
             string ans = "";
@@ -146,7 +182,7 @@ class BigInteger
             int x_len = x.size;
             int y_len = y.size;
             int t_len;
-            //making length equal
+            //making length equal by padding zeros to shorter string
             if (x_len < y_len)
             {
                 t_len = y_len;
@@ -167,7 +203,10 @@ class BigInteger
             }
             // finding 10's complement.
             y_data = tenscomp(y_data);
-            //addition of both num.
+            /*
+             * addition of both num :: 
+             * num1 - num2 = num1 + tenscomp(num2);
+             */ 
             for (int i = t_len - 1; i >= 0; i--)
             {
 
@@ -183,14 +222,15 @@ class BigInteger
             return BigInteger(ans);
         }
         else if (x.sign != y.sign)
-        {
+        {   //if sign are diff then we can add two numbers.
             y.sign = 1 - y.sign;
             BigInteger ans = add(x, y);
             y.sign = 1 - y.sign;
             return ans;
         }
         else
-        {
+        {   
+            // if both num are -ve then change sign of both and then subtract.
             x.sign = 0;
             y.sign = 0;
             BigInteger ans = subtract(y, x);
@@ -199,6 +239,9 @@ class BigInteger
             return ans;
         }
     }
+    /*
+     * multiplication of two numbers by classical method of multiplication.
+     */
     BigInteger multiply(BigInteger x)
     {
         BigInteger *mult;
@@ -206,6 +249,7 @@ class BigInteger
         string y_data;
         int x_len;
         int y_len;
+        //storing bigger number in x_data and smaller in y_data.
         if (this->size > x.size)
         {
             x_data = this->data;
@@ -222,6 +266,7 @@ class BigInteger
         }
         string ans = "";
         int append_zero = y_len - 1;
+        //standard multiplication method.
         for (int i = 0; i < y_len; i++)
         {
             int two = y_data[i] - '0';
@@ -258,6 +303,9 @@ class BigInteger
         }
         return (*mult);
     }
+    /*
+     * division algo implemented as repeated subtraction.
+     */
     BigInteger divide(BigInteger x)
     {
         BigInteger one("1");
@@ -295,12 +343,18 @@ class BigInteger
             return ans;
         }
     }
+    /*
+     * returns true if two BigInt is totally same.
+     */
     bool isEqual(BigInteger x, BigInteger y)
     {
         if (x.data == y.data && x.sign == y.sign && x.size == y.size)
             return true;
         return false;
     }
+    /*
+     * GCD of two numbers by Euclids algo.
+     */
     BigInteger my_gcd(BigInteger x)
     {
         BigInteger zero("0");
