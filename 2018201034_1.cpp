@@ -314,7 +314,7 @@ class BigInteger
     {
         BigInteger one("1");
         BigInteger ans("0");
-        int sign;
+        int sign=0;
         if (this->data[0] == 0 && x.data[0] == 0)
         {
             return BigInteger("0");
@@ -340,10 +340,7 @@ class BigInteger
                 ans.sign = tmp.sign;
                 ans.size = tmp.size;
             }
-            if (sign == -1)
-            {
                 ans.sign = sign;
-            }
             return ans;
         }
     }
@@ -394,7 +391,6 @@ int main()
         {
         case 1:
             ans = b1.add(b2);
-            ;
             break;
         case 2:
             ans = b1.subtract(b2);
