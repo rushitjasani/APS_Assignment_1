@@ -2,6 +2,11 @@
 using namespace std;
 #define ll long long
 
+/*
+ * AVL Tree node structure: 
+ * data, left child, right child,height of node(leaf at height 1)
+ * total nodes counts total nodes in subtree including itself.
+ */ 
 typedef struct AVLnode
 {
     ll data;
@@ -13,6 +18,9 @@ typedef struct AVLnode
 
 node *root = NULL;
 
+/*
+ *creation of node by memory allocation and initial values
+ */
 node *create_node(ll data)
 {
     node *n = (node *)malloc(sizeof(node));
@@ -24,6 +32,10 @@ node *create_node(ll data)
     return n;
 }
 
+/*
+ * returns height of given node if node exist
+ * else give zero as height.
+ */ 
 ll getHeight(node *n)
 {
     if (n == NULL)
@@ -31,10 +43,19 @@ ll getHeight(node *n)
     else
         return n->height;
 }
+
+/*
+ * computes height of given node from heights of it's childs.
+ */
 ll computeTotalHeight(node *n)
 {
     return max(getHeight(n->left), getHeight(n->right)) + 1;
 }
+
+/*
+ * give stored total node in node if node exist.
+ * else gives zero.
+ */
 ll getTotalnode(node *n)
 {
     if (n == NULL)
@@ -42,10 +63,17 @@ ll getTotalnode(node *n)
     else
         return n->total_node;
 }
+
+/*
+ *computes how many nodes are there under given node.
+ */ 
 ll computeTotalNode(node *n)
 {
     return getTotalnode(n->left) + getTotalnode(n->right) + 1;
 }
+/*
+ * computes balance factor from heights of left and right subtrees
+ */
 ll computeBalFact(node *n)
 {
     ll l_h = getHeight(n->left);
@@ -53,6 +81,11 @@ ll computeBalFact(node *n)
     return (l_h - r_h);
 }
 
+/*
+ * Left Rotate : 
+ * performs link changes in given node and it's right child
+ * updates height and total nodes for modified nodes.
+ */ 
 node *Lrotate(node *n)
 {
     node *store_rc = n->right;
@@ -66,6 +99,11 @@ node *Lrotate(node *n)
     return store_rc;
 }
 
+/*
+ * Right Rotate : 
+ * performs link changes in given node and it's left child
+ * updates height and total nodes for modified nodes.
+ */
 node *Rrotate(node *n)
 {
     node *store_lc = n->left;
@@ -79,15 +117,24 @@ node *Rrotate(node *n)
     return store_lc;
 }
 
+/*
+ * Performs balancing on given node by deciding which 
+ * rotation is needed. decision is taken by parent and 
+ * childs balance factors : e.g.
+ * -2 -1 : Left Rotation 
+ * -2  1 : Right Rotate left child then Left rotate on given node
+ *  2  1 : Right Rotation
+ *  2 -1 : Left Rotate Right child then Right Rotate on given node
+ */ 
 node *do_balancing(node *n, ll balanceFact)
 {
     if (balanceFact == -2)
     {
         ll balanceFactc = computeBalFact(n->right);
         if (balanceFactc == -1)
-            return Lrotate(n); //LL
+            return Lrotate(n);                  //LL
         else if (balanceFactc == 1)
-        { //RL
+        {                                       //RL
             n->right = Rrotate(n->right);
             return Lrotate(n);
         }
@@ -96,52 +143,53 @@ node *do_balancing(node *n, ll balanceFact)
     {
         ll balanceFactc = computeBalFact(n->left);
         if (balanceFactc == -1)
-        { //LR
+        {                                       //LR
             n->left = Lrotate(n->left);
             return Rrotate(n);
         }
         else if (balanceFactc == 1)
-            return Rrotate(n); //RR
+            return Rrotate(n);                  //RR
     }
     return n;
 }
 
+/*
+ * Insert data d to tree rooted at r.
+ */ 
 node *insert(node *r, ll d)
 {
-    node *newroot = NULL;
     if (r == NULL)
-        return create_node(d);
+        return create_node(d);  //new node creation at leaf level
     if (d == r->data)
-        return r;
+        return r;               //if node already exist
     if (d > r->data)
-        r->right = insert(r->right, d);
+        r->right = insert(r->right, d); //traversing to right place
     else
-        r->left = insert(r->left, d);
+        r->left = insert(r->left, d);   //traversing to right place
 
-    r->height = computeTotalHeight(r);
-    r->total_node = computeTotalNode(r);
-
-    ll balanceFact = computeBalFact(r);
-
-    if (balanceFact > 1 || balanceFact < -1)
-    {
-        newroot = do_balancing(r, balanceFact);
-        r = newroot;
-    }
+    r->height = computeTotalHeight(r);      //correcting height of node
+    r->total_node = computeTotalNode(r);    //comuting total node of given node
+    ll balanceFact = computeBalFact(r);     //finding balance factor
+    //if balance factor is not proper then do balancing.
+    if (balanceFact > 1 || balanceFact < -1) 
+        r = do_balancing(r, balanceFact);
     return r;
 }
 
+/**
+ * Delete node with key d from AVL tree rooted at root r
+ */ 
 node *deleteNode(node *r, ll d)
 {
-    node *newroot;
     if (r == NULL)
-        return r;
+        return r;   //if node is not found then return null.   
     if (d > r->data)
-        r->right = deleteNode(r->right, d);
+        r->right = deleteNode(r->right, d); //traversing is AVL tree
     else if (d < r->data)
-        r->left = deleteNode(r->left, d);
-    else if (d == r->data)
+        r->left = deleteNode(r->left, d);   //traversing in AVL tree
+    else if (d == r->data)                  //node found with data d.
     {
+        //if node has no child then simply make it NULL and free the space.
         if (r->left == NULL && r->right == NULL)
         {
             node *tmp = r;
@@ -150,6 +198,10 @@ node *deleteNode(node *r, ll d)
         }
         else if (r->left == NULL || r->right == NULL)
         {
+            /*
+             * if it has one child then copy all data of child to parent and 
+             * then free the child node.
+             */
             node *child;
             if (r->left != NULL)
                 child = r->left;
@@ -166,6 +218,11 @@ node *deleteNode(node *r, ll d)
         }
         else
         {
+            /*
+             * if node has both child then find inOrder SUC 
+             * and copy data of inorder successor to given node
+             * and then delete that successor node. 
+             */
             node *ino_suc = r->right;
             while (ino_suc->left != NULL)
                 ino_suc = ino_suc->left;
@@ -173,19 +230,25 @@ node *deleteNode(node *r, ll d)
             r->right = deleteNode(r->right, ino_suc->data);
         }
     }
+    // if tree becomes null then return r here only.(only one node case)
     if (r == NULL)
         return r;
+
+    /*
+     * do balancing and data updation after delete 
+     * operation id necessary
+     */
     r->height = computeTotalHeight(r);
     r->total_node = computeTotalNode(r);
     ll balanceFact = computeBalFact(r);
     if (balanceFact > 1 || balanceFact < -1)
-    {
-        newroot = do_balancing(r, balanceFact);
-        r = newroot;
-    }
+        r= do_balancing(r, balanceFact);
     return r;
 }
 
+/*
+ * Simple recursive search of node in AVL tree
+ */
 bool search_node(node *root, ll d)
 {
     if (root == NULL)
@@ -199,20 +262,24 @@ bool search_node(node *root, ll d)
     return false;
 }
 
-ll inOrder_2(node *r, ll y)
+/*
+ * find kth minimum by checking total nodes in left 
+ * and right subtree and find kth element accordingly.
+ */
+ll kth_minimum(node *r, ll y)
 {
     int r_pos = r->total_node - getTotalnode(r->right);
     if (y == r_pos)
         return r->data;
     else if (y < r_pos)
-        return inOrder_2(r->left, y);
+        return kth_minimum(r->left, y);
     else
-        return inOrder_2(r->right, y - r_pos);
+        return kth_minimum(r->right, y - r_pos);
 }
 
 void print_kth_min(node *r, ll y)
 {
-    ll kth_elem = inOrder_2(r, y);
+    ll kth_elem = kth_minimum(r, y);
     cout << kth_elem << endl;
     r = deleteNode(r, kth_elem);
 }
