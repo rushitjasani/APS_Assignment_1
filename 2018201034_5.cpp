@@ -1,3 +1,7 @@
+/*
+ * RUNNING MEDIAN by Rushit M Jasani : 2018201034
+ */
+
 #include <bits/stdc++.h>
 #define ll long long
 using namespace std;
@@ -5,6 +9,9 @@ using namespace std;
 ll min_heap[100005];
 ll max_heap[100005];
 
+/*
+ * Heapify for MaxHeap
+ */
 void Max_Heapify(ll index, ll size)
 {
     ll left_child = (2 * index) + 1;
@@ -26,7 +33,9 @@ void Max_Heapify(ll index, ll size)
     }
     return;
 }
-
+/*
+ * Heapify in MinHeap
+ */
 void Min_Heapify(ll index, ll size)
 {
     ll left_child = (2 * index) + 1;
@@ -49,32 +58,42 @@ void Min_Heapify(ll index, ll size)
     }
     return;
 }
-
+/**
+ * Insert element in MaxHeap
+ */ 
 void max_insert(ll a, ll size)
 {
     max_heap[size - 1] = a;
     for (ll i = ceil(size - 1 / 2.0) - 1; i >= 0;)
     {
         Max_Heapify(i, size);
-        i = ceil(i / 2.0) - 1;
+        i = ceil(i / 2.0) - 1;                          //parent node
     }
 }
-
+/**
+ * Insert element in MinHeap
+ */ 
 void min_insert(ll a, ll size)
 {
     min_heap[size - 1] = a;
     for (ll i = ceil(size - 1 / 2.0) - 1; i >= 0;)
     {
         Min_Heapify(i, size);
-        i = ceil(i / 2.0) - 1;
+        i = ceil(i / 2.0) - 1;                           //parent node
     }
 }
+/*
+ * Deletes Maximum Element from Maxheap
+ */ 
 void delete_max(ll size)
 {
     max_heap[0] = max_heap[size - 1];
     size--;
     Max_Heapify(0, size);
 }
+/*
+ * Deletes Minimum Element from Minheap
+ */ 
 void delete_min(ll size)
 {
     min_heap[0] = min_heap[size - 1];

@@ -1,3 +1,7 @@
+/*
+ * VECTOR CLASS by Rushit M Jasani : 2018201034
+ */
+
 #include <iostream>
 #include <cstdlib>
 using namespace std;
@@ -29,7 +33,7 @@ class vector
         int size_temp = n, count = 1;
         while (size_temp >>= 1)
             count++;
-        vec = (int *)malloc(1 << count * sizeof(int));
+        vec = (int *)malloc((1 << count) * sizeof(int));
         for (int i = 0; i < n; i++)
             vec[i] = 0;
         if (!vec)
@@ -39,7 +43,7 @@ class vector
         }
         else
         {
-            vec_capacity = 1 << count;
+            vec_capacity = (1 << count);
             size = n;
         }
     }
@@ -48,7 +52,7 @@ class vector
         int size_temp = n, count = 1;
         while (size_temp >>= 1)
             count++;
-        vec = (int *)malloc(1 << count * sizeof(int));
+        vec = (int *)malloc((1 << count) * sizeof(int));
         for (int i = 0; i < n; i++)
             vec[i] = x;
         if (!vec)
@@ -66,16 +70,24 @@ class vector
     {
         return size;
     }
+    int getcapacity()
+    {
+        return vec_capacity;
+    }
     void push_back(int x)
     {
+        cout << size << " ## " << vec_capacity << endl;
         if (size == vec_capacity)
         {
-            vec_capacity <<= 1;
-            if (!realloc(vec, vec_capacity * sizeof(int)))
+            vec_capacity = vec_capacity * 2;
+            void *tmp = realloc(vec, vec_capacity * sizeof(int));
+
+            if (tmp == NULL)
             {
                 cout << "Memory Alloc Failed.";
                 exit(1);
-            };
+            }
+            vec = (int *)tmp;
         }
         vec[size++] = x;
     }
@@ -87,12 +99,25 @@ class vector
         }
         else
             cout << "Vector Empty" << endl;
+
+        if (size == (vec_capacity >> 1)-1 )
+        {
+            vec_capacity >>= 1;
+            void *tmp = realloc(vec, vec_capacity * sizeof(int));
+            if (tmp == NULL)
+            {
+                cout << "Memory Alloc Failed.";
+                exit(1);
+            }
+            vec =(int *) tmp;
+        }
     }
     int operator[](int i)
     {
-        if (i < 0 || i > size)
+        if (i < 0 || i >= size)
         {
             cout << "invalid index value" << endl;
+            return -1;
         }
         else
             return vec[i];
@@ -106,6 +131,7 @@ class vector
         else
         {
             cout << "Vector Empty" << endl;
+            return -1;
         }
     }
     int back()
@@ -117,6 +143,7 @@ class vector
         else
         {
             cout << "Vector Empty" << endl;
+            return -1;
         }
     }
     void insert(int i, int x)
@@ -135,6 +162,17 @@ class vector
         for (int iter = i; iter < size - 1; iter++)
             vec[iter] = vec[iter + 1];
         size--;
+        if (size == (vec_capacity >> 1)-1 )
+        {
+            vec_capacity >>= 1;
+            void *tmp = realloc(vec, vec_capacity * sizeof(int));
+            if (tmp == NULL)
+            {
+                cout << "Memory Alloc Failed.";
+                exit(1);
+            }
+            vec =(int *) tmp;
+        }
     }
     int capacity()
     {
