@@ -46,17 +46,18 @@ void create_heap(int size){
 }
 
 void k_way_merge(char *out_file,int num_of_runs){
-    ofstream final_out;
-    final_out.open(out_file);
-    vector< ifstream > chunks(num_of_runs);
+    FILE *final_out;
+    final_out = fopen(out_file, "w");
+    vector< FILE* > chunks(num_of_runs);
     for(unsigned int i=0;i<chunks.size();i++){
         string f_name = to_string(i);
-        chunks[i].open(f_name);
+        chunks[i] = fopen(f_name.c_str(),"r");
     }
     int min_heap_size = num_of_runs;
     for(unsigned int i=0;i<chunks.size();i++){
         int tmp;
-        if(chunks[i] >> tmp){
+        fscanf(chunks[i],"%d",&tmp);
+        if(!feof(chunks[i])){
             min_heap[i] = tmp;
             file_index[i] = i;
         } 
@@ -64,10 +65,10 @@ void k_way_merge(char *out_file,int num_of_runs){
     create_heap(min_heap_size);
     int iterator = 0;
     while(iterator != num_of_runs){
-
-        final_out << min_heap[0] << endl;
+        fprintf(final_out,"%d\n",min_heap[0]);
         int tmp_data;
-        if(chunks[file_index[0]] >> tmp_data){
+        fscanf(chunks[file_index[0]],"%d",&tmp_data);
+        if(!feof(chunks[file_index[0]])){
             min_heap[0] = tmp_data;
         }
         else{
@@ -77,46 +78,47 @@ void k_way_merge(char *out_file,int num_of_runs){
         Min_Heapify(0,min_heap_size);
     }
     for(unsigned int i=0;i<chunks.size();i++){
-        chunks[i].close();
+        fclose(chunks[i]);
         string s = to_string(i);
         remove( s.c_str() );
     }
-    final_out.close();
+    fclose(final_out);
 }
 
 void external_merge(char *inp_file, char *out_file){
-    ifstream inp;
-    inp.open(inp_file);
+    FILE* inp;
+    inp = fopen(inp_file,"r");
     int data;
     int count=RUN_SIZE;
     int int_file_name = 0;
     string f_name;
-    ofstream outfile;
+    FILE *outfile;
     vector<int> v;
-    while(inp >> data){
+    while(!feof(inp)){
+	    fscanf(inp,"%d",&data);
         if(count == RUN_SIZE){
             f_name = to_string(int_file_name);
             int_file_name++;
             v.clear();
-            outfile.open(f_name);
+            outfile = fopen(f_name.c_str(),"w");
         }
         v.push_back(data);
         count--;
         if(count == 0){
             sort(v.begin(),v.end());
-            for(unsigned int i=0;i<v.size();i++) outfile << v[i] << endl;
-            outfile.close();
+            for(unsigned int i=0;i<v.size();i++) fprintf(outfile,"%d\n",v[i]);
+            fclose(outfile);
             count = RUN_SIZE;
         }
     }
     if(count != RUN_SIZE){
             sort(v.begin(),v.end());
-            for(unsigned int i=0;i<v.size();i++) outfile << v[i] << endl;
-            outfile.close();
+            for(unsigned int i=0;i<v.size();i++) fprintf(outfile,"%d\n",v[i]);
+            fclose(outfile);
             count = RUN_SIZE;
     }
     int num_of_runs = int_file_name;
-    inp.close();
+    fclose(inp);
 
     /*
      * Merging sorted chunks

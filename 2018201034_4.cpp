@@ -97,8 +97,10 @@ class vector
         {
             size--;
         }
-        else
+        else{
             cout << "Vector Empty" << endl;
+            exit(1);
+        }
 
         if (size == (vec_capacity >> 1)-1 )
         {
@@ -117,7 +119,7 @@ class vector
         if (i < 0 || i >= size)
         {
             cout << "invalid index value" << endl;
-            return -1;
+            exit(1);
         }
         else
             return vec[i];
@@ -131,7 +133,7 @@ class vector
         else
         {
             cout << "Vector Empty" << endl;
-            return -1;
+            exit(1);
         }
     }
     int back()
@@ -143,13 +145,15 @@ class vector
         else
         {
             cout << "Vector Empty" << endl;
-            return -1;
+            exit(1);
         }
     }
     void insert(int i, int x)
     {
-        if (i < 0 || i > size - 1)
+        if (i < 0 || i > size - 1){
             cout << "No Negative Indexed supported." << endl;
+            exit(1);
+        }
         push_back(x);
         for (int iter = size - 1; iter > i; iter--)
             vec[iter] = vec[iter - 1];
@@ -157,8 +161,10 @@ class vector
     }
     void erase(int i)
     {
-        if (i < 0 || i > size - 1)
+        if (i < 0 || i > size - 1){
             cout << "No Negative Indexed supported." << endl;
+            exit(1);
+        }
         for (int iter = i; iter < size - 1; iter++)
             vec[iter] = vec[iter + 1];
         size--;
