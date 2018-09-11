@@ -8,7 +8,7 @@ using namespace std;
 class vector
 {
   private:
-    int size;
+    int d_size;
     int vec_capacity;
     int *vec;
 
@@ -24,7 +24,7 @@ class vector
         else
         {
             vec_capacity = 2;
-            size = 0;
+            d_size = 0;
         }
     }
     vector(int n)
@@ -44,7 +44,7 @@ class vector
         else
         {
             vec_capacity = (1 << count);
-            size = n;
+            d_size = n;
         }
     }
     vector(int n, int x)
@@ -63,12 +63,12 @@ class vector
         else
         {
             vec_capacity = 1 << count;
-            size = n;
+            d_size = n;
         }
     }
-    int v_size()
+    int size()
     {
-        return size;
+        return d_size;
     }
     int getcapacity()
     {
@@ -76,8 +76,7 @@ class vector
     }
     void push_back(int x)
     {
-        cout << size << " ## " << vec_capacity << endl;
-        if (size == vec_capacity)
+        if (d_size == vec_capacity)
         {
             vec_capacity = vec_capacity * 2;
             void *tmp = realloc(vec, vec_capacity * sizeof(int));
@@ -89,20 +88,20 @@ class vector
             }
             vec = (int *)tmp;
         }
-        vec[size++] = x;
+        vec[d_size++] = x;
     }
     void pop_back()
     {
-        if (size > 0)
+        if (d_size > 0)
         {
-            size--;
+            d_size--;
         }
         else{
             cout << "Vector Empty" << endl;
             exit(1);
         }
 
-        if (size == (vec_capacity >> 1)-1 )
+        if (d_size == (vec_capacity >> 1)-1 )
         {
             vec_capacity >>= 1;
             void *tmp = realloc(vec, vec_capacity * sizeof(int));
@@ -116,7 +115,7 @@ class vector
     }
     int operator[](int i)
     {
-        if (i < 0 || i >= size)
+        if (i < 0 || i >= d_size)
         {
             cout << "invalid index value" << endl;
             exit(1);
@@ -126,7 +125,7 @@ class vector
     }
     int front()
     {
-        if (size > 0)
+        if (d_size > 0)
         {
             return vec[0];
         }
@@ -138,9 +137,9 @@ class vector
     }
     int back()
     {
-        if (size > 0)
+        if (d_size > 0)
         {
-            return vec[size - 1];
+            return vec[d_size - 1];
         }
         else
         {
@@ -150,25 +149,25 @@ class vector
     }
     void insert(int i, int x)
     {
-        if (i < 0 || i > size - 1){
+        if (i < 0 || i > d_size - 1){
             cout << "No Negative Indexed supported." << endl;
             exit(1);
         }
         push_back(x);
-        for (int iter = size - 1; iter > i; iter--)
+        for (int iter = d_size - 1; iter > i; iter--)
             vec[iter] = vec[iter - 1];
         vec[i] = x;
     }
     void erase(int i)
     {
-        if (i < 0 || i > size - 1){
+        if (i < 0 || i > d_size - 1){
             cout << "No Negative Indexed supported." << endl;
             exit(1);
         }
-        for (int iter = i; iter < size - 1; iter++)
+        for (int iter = i; iter < d_size - 1; iter++)
             vec[iter] = vec[iter + 1];
-        size--;
-        if (size == (vec_capacity >> 1)-1 )
+        d_size--;
+        if (d_size == (vec_capacity >> 1)-1 )
         {
             vec_capacity >>= 1;
             void *tmp = realloc(vec, vec_capacity * sizeof(int));
@@ -196,7 +195,7 @@ class vector
         else
         {
             vec_capacity = 2;
-            size = 0;
+            d_size = 0;
         }
     }
 };

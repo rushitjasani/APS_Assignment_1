@@ -48,13 +48,13 @@ void create_heap(int size){
 void k_way_merge(char *out_file,int num_of_runs){
     FILE *final_out;
     final_out = fopen(out_file, "w");
-    vector< FILE* > chunks(num_of_runs);
-    for(unsigned int i=0;i<chunks.size();i++){
+    FILE* chunks[num_of_runs];
+    for( int i=0;i<num_of_runs;i++){
         string f_name = to_string(i);
         chunks[i] = fopen(f_name.c_str(),"r");
     }
     int min_heap_size = num_of_runs;
-    for(unsigned int i=0;i<chunks.size();i++){
+    for( int i=0;i<num_of_runs;i++){
         int tmp;
         fscanf(chunks[i],"%d",&tmp);
         if(!feof(chunks[i])){
@@ -65,7 +65,7 @@ void k_way_merge(char *out_file,int num_of_runs){
     create_heap(min_heap_size);
     int iterator = 0;
     while(iterator != num_of_runs){
-        fprintf(final_out,"%d\n",min_heap[0]);
+        fprintf(final_out,"%d ",min_heap[0]);
         int tmp_data;
         fscanf(chunks[file_index[0]],"%d",&tmp_data);
         if(!feof(chunks[file_index[0]])){
@@ -77,7 +77,7 @@ void k_way_merge(char *out_file,int num_of_runs){
         }
         Min_Heapify(0,min_heap_size);
     }
-    for(unsigned int i=0;i<chunks.size();i++){
+    for( int i=0;i<num_of_runs;i++){
         fclose(chunks[i]);
         string s = to_string(i);
         remove( s.c_str() );
@@ -93,27 +93,27 @@ void external_merge(char *inp_file, char *out_file){
     int int_file_name = 0;
     string f_name;
     FILE *outfile;
-    vector<int> v;
-    while(!feof(inp)){
-	    fscanf(inp,"%d",&data);
+    int v[RUN_SIZE];
+    while(1){
+	    if(fscanf(inp,"%d",&data) == EOF) break;
         if(count == RUN_SIZE){
             f_name = to_string(int_file_name);
             int_file_name++;
-            v.clear();
+            memset(v, 0,RUN_SIZE*sizeof(int));
             outfile = fopen(f_name.c_str(),"w");
         }
-        v.push_back(data);
+        v[RUN_SIZE-count] = data;
         count--;
         if(count == 0){
-            sort(v.begin(),v.end());
-            for(unsigned int i=0;i<v.size();i++) fprintf(outfile,"%d\n",v[i]);
+            sort(v,v+RUN_SIZE);
+            for( int i=0;i<RUN_SIZE;i++) fprintf(outfile,"%d ",v[i]);
             fclose(outfile);
             count = RUN_SIZE;
         }
     }
     if(count != RUN_SIZE){
-            sort(v.begin(),v.end());
-            for(unsigned int i=0;i<v.size();i++) fprintf(outfile,"%d\n",v[i]);
+            sort(v,v+RUN_SIZE-count);
+            for( int i=0;i<RUN_SIZE-count;i++) fprintf(outfile,"%d ",v[i]);
             fclose(outfile);
             count = RUN_SIZE;
     }
@@ -127,7 +127,9 @@ void external_merge(char *inp_file, char *out_file){
 }
 
 int main(int argc, char * argv[]){
+    clock_t begin = clock();
     ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
     if(argc != 3){
         cout << "Invalid arguments" << endl;
         exit(0);
@@ -135,6 +137,7 @@ int main(int argc, char * argv[]){
     else{
         external_merge(argv[1], argv[2]);
     }
-    cout<<"\nTime Elapsed: " << 1.0*clock() / CLOCKS_PER_SEC << " sec\n";
+    clock_t end = clock();
+    cout<<"\nTime Elapsed: " << (end-begin)/CLOCKS_PER_SEC << " sec\n";
     return 0;
 }
