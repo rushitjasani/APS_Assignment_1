@@ -138,6 +138,5 @@ int main(int argc, char * argv[]){
         external_merge(argv[1], argv[2]);
     }
     clock_t end = clock();
-    cout<<"\nTime Elapsed: " << (end-begin)/CLOCKS_PER_SEC << " sec\n";
     return 0;
 }

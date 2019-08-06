@@ -19,7 +19,7 @@ class vector
         if (!vec)
         {
             cout << "Memory Alloc Failed.";
-            exit(1);
+            exit(0);
         }
         else
         {
@@ -39,7 +39,7 @@ class vector
         if (!vec)
         {
             cout << "Memory Alloc Failed.";
-            exit(1);
+            exit(0);
         }
         else
         {
@@ -58,7 +58,7 @@ class vector
         if (!vec)
         {
             cout << "Memory Alloc Failed.";
-            exit(1);
+            exit(0);
         }
         else
         {
@@ -84,7 +84,6 @@ class vector
             if (tmp == NULL)
             {
                 cout << "Memory Alloc Failed.";
-                exit(1);
             }
             vec = (int *)tmp;
         }
@@ -98,7 +97,7 @@ class vector
         }
         else{
             cout << "Vector Empty" << endl;
-            exit(1);
+            return;
         }
 
         if (d_size == (vec_capacity >> 1)-1 )
@@ -108,7 +107,7 @@ class vector
             if (tmp == NULL)
             {
                 cout << "Memory Alloc Failed.";
-                exit(1);
+                return;
             }
             vec =(int *) tmp;
         }
@@ -118,7 +117,7 @@ class vector
         if (i < 0 || i >= d_size)
         {
             cout << "invalid index value" << endl;
-            exit(1);
+            return -1;
         }
         else
             return vec[i];
@@ -132,7 +131,7 @@ class vector
         else
         {
             cout << "Vector Empty" << endl;
-            exit(1);
+            return -1;
         }
     }
     int back()
@@ -144,14 +143,14 @@ class vector
         else
         {
             cout << "Vector Empty" << endl;
-            exit(1);
+            return -1;
         }
     }
     void insert(int i, int x)
     {
         if (i < 0 || i > d_size - 1){
-            cout << "No Negative Indexed supported." << endl;
-            exit(1);
+            cout << "Index Out of bound." << endl;
+            return;
         }
         push_back(x);
         for (int iter = d_size - 1; iter > i; iter--)
@@ -162,7 +161,7 @@ class vector
     {
         if (i < 0 || i > d_size - 1){
             cout << "No Negative Indexed supported." << endl;
-            exit(1);
+            return;
         }
         for (int iter = i; iter < d_size - 1; iter++)
             vec[iter] = vec[iter + 1];
@@ -174,7 +173,7 @@ class vector
             if (tmp == NULL)
             {
                 cout << "Memory Alloc Failed.";
-                exit(1);
+                return;
             }
             vec =(int *) tmp;
         }
@@ -190,7 +189,7 @@ class vector
         if (!vec)
         {
             cout << "Memory Alloc Failed.";
-            exit(1);
+            exit(0);
         }
         else
         {

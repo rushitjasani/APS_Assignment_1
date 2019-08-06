@@ -1,31 +1,45 @@
-#include"2018201034_4.cpp"
-#include<stdio.h>
+#include <iostream>
+#include "2018201034_4.cpp"
 
+using namespace std;
 int main(){
-    vector v;
-    vector v1(3);
-    vector v2(15);
-    for(int i=1;i<15;i++){
-        v1.push_back(i);
-        cout << v1.getcapacity() << endl;
-    } 
-    cout << v1[2] << " " << v1[4] << " " << v1[8] << endl;
-    v1.erase(0);
-    v1.erase(5);
-    v1.insert(0,1);
-    v1.insert(4,5);
-    v1.push_back(22);
-    cout << v1.front() << " " << v1.back() << endl;
-    for(int i=0;i<v1.size();i++) cout << v1[i] << " ";
-    int x=v1.size();
-    for(int i=1;i<x;i++){
-        v1.pop_back();
-        cout << v1.getcapacity() << endl;
-    } 
-    cout << endl;
-    v1.clear();
-    v1.push_back(712);
-    for(int i=0;i<v1.size();i++) cout << v1[i] << " ";
-    cout << endl;
-    return 0;
+  vector v;
+  cout<<"size"<<v.size()<<endl;
+  for(int i=0;i<10;i++)
+  v.push_back(i);
+  cout<<"size"<<v.size()<<endl;
+  v.insert(100,90);
+  v.erase(2);
+  for(int i=0;i<v.size();i++){
+    cout<<v[i]<<" ";
+  }
+  cout<<endl;
+  cout<<"Front"<<v.front()<<endl;
+  cout<<"Back"<<v.back()<<endl;
+  v.pop_back();
+  cout<<"\nValue popped\n";
+  for(int i=0;i<v.size();i++){
+    cout<<v[i]<<" ";
+  }
+  cout<<endl;
+  v.insert(4,20);
+  cout<<"\value inserted\n";
+  for(int i=0;i<v.size();i++){
+    cout<<v[i]<<" ";
+  }
+  v.erase(3);
+  cout<<"\nvalue erased\n";
+  for(int i=0;i<v.size();i++){
+    cout<<v[i]<<" ";
+  }
+  cout<<"\nsize is "<<v.size()<<endl;
+  vector b;
+  cout<<b.size()<<endl;
+  for(int i=0;i<9;i++)
+  b.push_back(3);
+  cout<<b.size()<<endl;
+  for(int i=0;i<8;i++){
+    b.pop_back();
+  }
+  cout<<b.size()<<endl;
 }
